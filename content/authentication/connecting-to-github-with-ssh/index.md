@@ -35,5 +35,5 @@ children:
   - /working-with-ssh-key-passphrases
   - /using-ssh-agent-forwarding
   - /managing-deploy-keys
-shortTitle: Connect with SSH
+shortTitle: Connect with SSH ed25519 @me
 ---
