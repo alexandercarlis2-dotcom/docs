@@ -4,12 +4,12 @@ intro: 'You can allow {% data variables.product.prodname_github_codespaces %} to
 versions:
   fpt: '*'
   ghec: '*'
-topics:
-  - Codespaces
 redirect_from:
   - /codespaces/codespaces-reference/allowing-your-codespace-to-access-a-private-image-registry
   - /codespaces/codespaces-reference/allowing-your-codespace-to-access-a-private-registry
 shortTitle: Access a private registry
+category:
+  - Set up dev containers for a project
 ---
 
 ## About private registries and {% data variables.product.prodname_github_codespaces %}
@@ -52,7 +52,7 @@ If you want to allow a subset of an organization's repositories to access a pack
 
 Seamless access from a codespace to a registry is limited to pulling packages. If you want to publish a package from inside a codespace, you must use a {% data variables.product.pat_v1 %} with the `write:packages` scope.
 
-We recommend publishing packages via {% data variables.product.prodname_actions %}. For more information, see [AUTOTITLE](/actions/publishing-packages/publishing-docker-images) and [AUTOTITLE](/actions/publishing-packages/publishing-nodejs-packages).
+We recommend publishing packages via {% data variables.product.prodname_actions %}. For more information, see [AUTOTITLE](/actions/tutorials/publish-packages/publish-docker-images) and [AUTOTITLE](/actions/tutorials/publish-packages/publish-nodejs-packages).
 
 ## Accessing images stored in other registries
 

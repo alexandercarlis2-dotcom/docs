@@ -11,6 +11,8 @@ redirect_from:
   - /early-access/enterprise-importer/migrating-repositories-with-github-enterprise-importer/migrating-repositories-to-github-enterprise-cloud/migrating-repositories-from-github-enterprise-server-to-github-enterprise-cloud
   - /early-access/enterprise-importer/migrating-repositories-with-github-enterprise-importer/migrating-repositories-from-github-enterprise-server-to-github-enterprise-cloud
   - /migrations/using-github-enterprise-importer/migrating-repositories-with-github-enterprise-importer/migrating-repositories-from-github-enterprise-server-to-github-enterprise-cloud
+category:
+  - Run an enterprise migration
 ---
 
 ## About repository migrations with {% data variables.product.prodname_importer_proper_name %}
@@ -19,7 +21,7 @@ redirect_from:
 
 {% api %}
 
-If you choose to use the API, you'll need to write your own scripts or use an HTTP client like [Insomnia](https://insomnia.rest/). You can learn more about getting started with {% data variables.product.company_short %}'s APIs in [AUTOTITLE](/rest/guides/getting-started-with-the-rest-api) and [AUTOTITLE](/graphql/guides/forming-calls-with-graphql).
+If you choose to use the API, you'll need to write your own scripts or use an HTTP client like [Insomnia](https://insomnia.rest/). You can learn more about getting started with {% data variables.product.company_short %}'s APIs in [AUTOTITLE](/rest/using-the-rest-api/getting-started-with-the-rest-api) and [AUTOTITLE](/graphql/guides/forming-calls-with-graphql).
 
 To migrate your repositories from {% data variables.product.prodname_ghe_server %} to {% data variables.product.prodname_ghe_cloud %} with the APIs, you will:
 

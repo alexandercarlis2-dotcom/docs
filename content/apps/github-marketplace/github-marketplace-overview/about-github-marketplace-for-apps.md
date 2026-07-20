@@ -11,8 +11,8 @@ redirect_from:
 versions:
   fpt: '*'
   ghec: '*'
-topics:
-  - Marketplace
+category:
+  - List your app on GitHub Marketplace
 ---
 [{% data variables.product.prodname_marketplace %}](https://github.com/marketplace) connects you to developers who want to extend and improve their {% data variables.product.prodname_dotcom %} workflows. You can list free and paid tools for developers to use in {% data variables.product.prodname_marketplace %}. {% data variables.product.prodname_marketplace %} offers developers two types of tools: {% data variables.product.prodname_actions %} and Apps, and each tool requires different steps for adding it to {% data variables.product.prodname_marketplace %}.
 
@@ -22,7 +22,7 @@ topics:
 
 {% data reusables.actions.actions-marketplace-ghecom %}
 
-To learn about publishing {% data variables.product.prodname_actions %} in {% data variables.product.prodname_marketplace %}, see [AUTOTITLE](/actions/creating-actions/publishing-actions-in-github-marketplace).
+To learn about publishing {% data variables.product.prodname_actions %} in {% data variables.product.prodname_marketplace %}, see [AUTOTITLE](/actions/how-tos/create-and-publish-actions/publish-in-github-marketplace).
 
 ## Apps
 

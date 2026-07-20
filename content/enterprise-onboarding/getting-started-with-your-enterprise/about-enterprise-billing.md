@@ -1,13 +1,12 @@
 ---
 title: About enterprise billing
-intro: 'Understand billing for {% data variables.product.prodname_ghe_cloud %}.'
+intro: Understand billing for {% data variables.product.prodname_ghe_cloud %}.
 versions:
   ghec: '*'
-type: overview
-topics:
-  - Accounts
-  - Enterprise
 shortTitle: Billing
+contentType: concepts
+docsTeamMetrics:
+  - enterprise-onboarding
 ---
 
 ## About billing for your enterprise
@@ -32,7 +31,7 @@ For prices and monthly allowances, see {% data variables.product.pricing_link %}
 
 ## Adding a payment method
 
-To pay for licenses and services, you can use a credit card, PayPal, or a Microsoft Azure subscription. For instructions, see [AUTOTITLE](/billing/managing-your-billing/managing-your-payment-and-billing-information).
+To pay for licenses and services, you can use a credit card, PayPal, or a Microsoft Azure subscription. For instructions, see [AUTOTITLE](/billing/how-tos/set-up-payment/manage-payment-info).
 
 ## Next steps
 

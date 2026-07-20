@@ -5,11 +5,11 @@ intro: 'Learn how to integrate your preferred custom models with {% data variabl
 versions:
   feature: github-models
 permissions: 'Organization owners can add custom models to {% data variables.product.prodname_github_models %} for their organization'
-topics:
-  - Enterprise
 allowTitleToDifferFromFilename: true
 redirect_from:
   - /github-models/github-models-at-scale/set-up-custom-model-integration-models-byok
+category:
+  - Manage GitHub Models for your organization
 ---
 
 {% data reusables.models.byok-preview-note %}
@@ -18,7 +18,7 @@ redirect_from:
 
 You can bring your own API keys (BYOK) to {% data variables.product.prodname_github_models %}, and enable teams to use your preferred large language model (LLM) providers across tools like Prompts, Playground, and Models in Actions. For more information about {% data variables.product.prodname_github_models %}, see [AUTOTITLE](/github-models/about-github-models).
 
-To learn about billing and pricing, see [AUTOTITLE](/billing/managing-billing-for-your-products/about-billing-for-github-models).
+To learn about billing and pricing, see [AUTOTITLE](/billing/concepts/product-billing/github-models).
 
 ## Why bring your own API keys?
 

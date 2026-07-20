@@ -4,8 +4,8 @@ intro: 'Test and compare AI model outputs using evaluators and scoring metrics i
 versions:
   feature: github-models
 shortTitle: Evaluate AI models
-topics:
-  - GitHub Models
+category:
+  - Build with AI models
 ---
 
 ## Overview
@@ -271,4 +271,4 @@ Committing your prompt configuration makes it easy to reuse, collaborate, and it
 ## Further reading
 
 * [AUTOTITLE](/github-models/use-github-models/storing-prompts-in-github-repositories)
-* [AUTOTITLE](/github-models/use-github-models/integrating-ai-models-into-your-development-workflow)
+* [AUTOTITLE](/copilot/how-tos/copilot-on-github/set-up-copilot/configure-access-to-ai-models)

@@ -4,11 +4,11 @@ shortTitle: Costs for GitHub Models
 intro: Reference information for calculating the cost of using different {% data variables.product.prodname_github_models %} directly (outside {% data variables.product.prodname_copilot %}).
 versions:
   feature: github-models
-topics:
-  - Billing
 contentType: reference
 redirect_from:
   - /billing/reference/models-multipliers-and-costs
+category:
+  - Understand product costs
 ---
 
 ## Use of models in {% data variables.product.github %}
@@ -17,7 +17,7 @@ The information in this article is for the direct use of {% data variables.produ
 
 {% data variables.product.github %} supports using models in two additional ways.
 
-* {% data variables.product.prodname_copilot %} uses models to perform its work, see [AUTOTITLE](/copilot/concepts/billing/copilot-requests#model-multipliers)
+* {% data variables.product.prodname_copilot %} uses models to perform its work, see [AUTOTITLE](/copilot/reference/copilot-billing/request-based-billing-legacy/copilot-requests#model-multipliers)
 * If you use models provided by other companies, see [AUTOTITLE](/github-models/github-models-at-scale/using-your-own-api-keys-in-github-models)
 
 ## Multipliers and costs for direct use of {% data variables.product.prodname_github_models %}

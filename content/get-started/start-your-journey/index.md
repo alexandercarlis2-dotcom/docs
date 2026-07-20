@@ -5,13 +5,8 @@ versions:
   fpt: '*'
   ghes: '*'
   ghec: '*'
-topics:
-  - Pull requests
-  - Issues
-  - Notifications
-  - Accounts
 children:
-  - /about-github-and-git
+  - /what-is-github
   - /creating-an-account-on-github
   - /hello-world
   - /setting-up-your-profile
@@ -28,7 +23,7 @@ journeyTracks:
     title: 'Get started'
     description: 'Master the fundamentals of {% data variables.product.github %} and Git.'
     guides:
-      - href: '/get-started/start-your-journey/about-github-and-git'
+      - href: '/get-started/start-your-journey/what-is-github'
       - href: '/get-started/start-your-journey/creating-an-account-on-github'
       - href: '/get-started/start-your-journey/hello-world'
       - href: '/get-started/start-your-journey/setting-up-your-profile'

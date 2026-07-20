@@ -15,6 +15,8 @@ versions:
 authors:
   - GitHub
 shortTitle: Learning resources
+category:
+  - Set up your account on GitHub
 ---
 
 ## Using {% data variables.product.github %}
@@ -27,7 +29,7 @@ Become better acquainted with {% data variables.product.github %} through our [A
 ## Using Git
 
 Familiarize yourself with Git through our series of articles:
-* [AUTOTITLE](/get-started/getting-started-with-git).
+* [AUTOTITLE](/get-started/git-basics).
 * [AUTOTITLE](/get-started/using-git).
 
 There are also lots of other online reading resources to help you learn Git:

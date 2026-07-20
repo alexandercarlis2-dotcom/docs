@@ -4,12 +4,12 @@ intro: You can grant enterprise members the ability to manage support tickets fo
 redirect_from:
   - /github/setting-up-and-managing-your-enterprise/managing-users-in-your-enterprise/managing-support-entitlements-for-your-enterprise
   - /admin/user-management/managing-users-in-your-enterprise/managing-support-entitlements-for-your-enterprise
+  - /enterprise-onboarding/support-for-your-enterprise/managing-support-entitlements
 versions:
   ghec: '*'
-topics:
-  - Enterprise
-  - Support
 shortTitle: Manage support entitlements
+category:
+  - Manage accounts and repositories
 ---
 
 ## About support entitlements

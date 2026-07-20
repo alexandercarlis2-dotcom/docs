@@ -5,11 +5,9 @@ intro: Streamline AI development in your enterprise.
 versions:
   feature: github-models
 permissions: 'Organization owners and enterprise owners'
-topics:
-  - Enterprise
-  - AI
-  - GitHub Models
 allowTitleToDifferFromFilename: true
+category:
+  - Manage GitHub Models for your organization
 ---
 
 {% data reusables.models.models-preview-note %}
@@ -124,7 +122,7 @@ Large software development projects often contain issues full of technical detai
 
 1. **Call your prompt in a workflow**
 
-   For information on creating workflows, see [AUTOTITLE](/actions/writing-workflows).
+   For information on creating workflows, see [AUTOTITLE](/actions/how-tos/write-workflows).
 
    You need to set `models: read` permission to allow a prompt to be called in a workflow.
 

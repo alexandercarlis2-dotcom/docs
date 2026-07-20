@@ -15,11 +15,10 @@ versions:
   fpt: '*'
   ghes: '*'
   ghec: '*'
-topics:
-  - Accounts
-  - Repositories
 shortTitle: Invite collaborators
 contentType: other
+category:
+  - Manage access and repository policies
 ---
 
 ## Inviting a collaborator to a personal repository
@@ -39,4 +38,4 @@ You can send an invitation to collaborate in your repository directly to someone
 
 ## Next steps
 
-* For reference information, see [AUTOTITLE](/account-and-profile/reference/permission-levels-for-a-personal-account-repository#collaborator-access-for-a-repository-owned-by-a-personal-account)
+* For reference information, see [AUTOTITLE](/repositories/managing-your-repositorys-settings-and-features/repository-access-and-collaboration/permission-levels-for-a-personal-account-repository#collaborator-access-for-a-repository-owned-by-a-personal-account)

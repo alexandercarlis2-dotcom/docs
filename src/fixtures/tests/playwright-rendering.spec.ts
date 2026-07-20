@@ -1,6 +1,6 @@
 import dotenv from 'dotenv'
 import { test, expect } from '@playwright/test'
-import { turnOffExperimentsInPage, dismissCTAPopover } from '../helpers/turn-off-experiments'
+import { turnOffExperimentsInPage } from '../helpers/turn-off-experiments'
 import { HOVERCARDS_ENABLED, ANALYTICS_ENABLED } from '../../frame/lib/constants'
 
 // This exists for the benefit of local testing.
@@ -22,7 +22,6 @@ test('view home page', async ({ page }) => {
 test('logo link keeps current version', async ({ page }) => {
   await page.goto('/enterprise-cloud@latest')
   await turnOffExperimentsInPage(page)
-  await dismissCTAPopover(page)
   // Basically clicking into any page that isn't the home page for this version.
   await page.getByTestId('product').getByRole('link', { name: 'Get started' }).click()
   await expect(page).toHaveURL(/\/en\/enterprise-cloud@latest\/get-started/)
@@ -53,12 +52,46 @@ test('use sidebar to go to Hello World page', async ({ page }) => {
   await expect(page).toHaveTitle(/Hello World - GitHub Docs/)
 })
 
+test('press "/" to open the search overlay', async ({ page }) => {
+  await page.goto('/')
+  await turnOffExperimentsInPage(page)
+
+  // Wait for the header search button to render, so the keydown listener is attached.
+  await page.locator('[data-testid="search"]:visible').waitFor()
+
+  const searchInput = page.getByTestId('overlay-search-input')
+  // The overlay (and its input) is not in the DOM until it's opened.
+  await expect(searchInput).toHaveCount(0)
+
+  // Pressing "/" anywhere on the page opens the overlay and focuses the input.
+  await page.keyboard.press('/')
+  await expect(searchInput).toBeFocused()
+
+  // Escape closes it again.
+  await page.keyboard.press('Escape')
+  await expect(searchInput).toHaveCount(0)
+})
+
+test('"/" typed inside the search input is a literal slash', async ({ page }) => {
+  await page.goto('/')
+  await turnOffExperimentsInPage(page)
+
+  await page.locator('[data-testid="search"]:visible').waitFor()
+
+  await page.keyboard.press('/')
+  const searchInput = page.getByTestId('overlay-search-input')
+  await expect(searchInput).toBeFocused()
+
+  // The "/" shortcut must not fire while typing in a field, so it is not swallowed.
+  await page.keyboard.type('a/b')
+  await expect(searchInput).toHaveValue('a/b')
+})
+
 test('do a search from home page and click on "Foo" page', async ({ page }) => {
   test.skip(!SEARCH_TESTS, 'No local Elasticsearch, no tests involving search')
 
   await page.goto('/')
   await turnOffExperimentsInPage(page)
-  await dismissCTAPopover(page)
 
   // Use the search overlay
   await page.locator('[data-testid="search"]:visible').click()
@@ -84,7 +117,6 @@ test('open search, and perform a general search', async ({ page }) => {
 
   await page.goto('/')
   await turnOffExperimentsInPage(page)
-  await dismissCTAPopover(page)
 
   await page.locator('[data-testid="search"]:visible').click()
   await page.getByTestId('overlay-search-input').fill('serve playwright')
@@ -182,7 +214,6 @@ test('search from enterprise-cloud and filter by top-level Fooing', async ({ pag
 
   await page.goto('/enterprise-cloud@latest')
   await turnOffExperimentsInPage(page)
-  await dismissCTAPopover(page)
 
   // Use the search overlay
   await page.locator('[data-testid="search"]:visible').click()
@@ -205,15 +236,14 @@ test('404 page renders correctly', async ({ page }) => {
   const response = await page.goto('/this-definitely-does-not-exist')
   expect(response?.status()).toBe(404)
 
-  // Check that the 404 page content is rendered
-  await expect(page.getByText(/It looks like this page doesn't exist/)).toBeVisible()
+  // 404 pages now render a minimal HTML response
+  await expect(page.getByText('Page not found.')).toBeVisible()
 })
 
 test.describe('platform picker', () => {
   test('switch operating systems', async ({ page }) => {
     await page.goto('/get-started/liquid/platform-specific')
     await turnOffExperimentsInPage(page)
-    await dismissCTAPopover(page)
 
     await page.getByTestId('platform-picker').getByRole('link', { name: 'Mac' }).click()
     await expect(page).toHaveURL(/\?platform=mac/)
@@ -230,7 +260,6 @@ test.describe('platform picker', () => {
     // default platform set to windows in fixture fronmatter
     await page.goto('/get-started/liquid/platform-specific')
     await turnOffExperimentsInPage(page)
-    await dismissCTAPopover(page)
     await expect(
       page.getByTestId('minitoc').getByRole('link', { name: 'Macintosh until 1999' }),
     ).not.toBeVisible()
@@ -249,7 +278,6 @@ test.describe('platform picker', () => {
   test('remember last clicked OS', async ({ page }) => {
     await page.goto('/get-started/liquid/platform-specific')
     await turnOffExperimentsInPage(page)
-    await dismissCTAPopover(page)
     await page.getByTestId('platform-picker').getByRole('link', { name: 'Windows' }).click()
 
     // Return and now the cookie should start us off on Windows again
@@ -263,7 +291,6 @@ test.describe('tool picker', () => {
   test('switch tools', async ({ page }) => {
     await page.goto('/get-started/liquid/tool-specific')
     await turnOffExperimentsInPage(page)
-    await dismissCTAPopover(page)
 
     await page.getByTestId('tool-picker').getByRole('link', { name: 'GitHub CLI' }).click()
     await expect(page).toHaveURL(/\?tool=cli/)
@@ -289,7 +316,6 @@ test.describe('tool picker', () => {
   test('remember last clicked tool', async ({ page }) => {
     await page.goto('/get-started/liquid/tool-specific')
     await turnOffExperimentsInPage(page)
-    await dismissCTAPopover(page)
     await page.getByTestId('tool-picker').getByRole('link', { name: 'Web browser' }).click()
 
     // Return and now the cookie should start us off with Web UI content again
@@ -303,7 +329,6 @@ test.describe('tool picker', () => {
     // default tool set to webui in fixture frontmatter
     await page.goto('/get-started/liquid/tool-specific')
     await turnOffExperimentsInPage(page)
-    await dismissCTAPopover(page)
     await expect(
       page.getByTestId('minitoc').getByRole('link', { name: 'Webui section' }),
     ).toBeVisible()
@@ -317,6 +342,44 @@ test.describe('tool picker', () => {
     await expect(
       page.getByTestId('minitoc').getByRole('link', { name: 'Desktop section' }),
     ).toBeVisible()
+  })
+})
+
+test.describe('code tabs', () => {
+  test('switch languages across groups', async ({ page }) => {
+    await page.goto('/get-started/liquid/code-tabs-test')
+    await turnOffExperimentsInPage(page)
+
+    const firstGroup = page.locator('.ghd-codetabs').nth(0)
+    const secondGroup = page.locator('.ghd-codetabs').nth(1)
+
+    await expect(firstGroup.getByRole('link', { name: 'TypeScript' })).toHaveAttribute(
+      'aria-current',
+      'page',
+    )
+    await firstGroup.getByRole('link', { name: 'Python' }).click()
+
+    await expect(firstGroup.getByRole('link', { name: 'Python' })).toHaveAttribute(
+      'aria-current',
+      'page',
+    )
+    await expect(secondGroup.getByRole('link', { name: 'Python' })).toHaveAttribute(
+      'aria-current',
+      'page',
+    )
+    await expect(firstGroup.getByText('from copilot import CopilotClient')).toBeVisible()
+    await expect(firstGroup.getByText('@github/copilot-sdk')).not.toBeVisible()
+  })
+
+  test('remembers the last selected language', async ({ page }) => {
+    await page.goto('/get-started/liquid/code-tabs-test')
+    await turnOffExperimentsInPage(page)
+    await page.locator('.ghd-codetabs').nth(0).getByRole('link', { name: 'Python' }).click()
+
+    await page.goto('/get-started/liquid/code-tabs-test')
+    await expect(
+      page.locator('.ghd-codetabs').nth(0).getByRole('link', { name: 'Python' }),
+    ).toHaveAttribute('aria-current', 'page')
   })
 })
 
@@ -353,7 +416,6 @@ test.describe('hover cards', () => {
   test('hover over link', async ({ page }) => {
     await page.goto('/pages/quickstart')
     await turnOffExperimentsInPage(page)
-    await dismissCTAPopover(page)
 
     // hover over a link and check for intro content from hovercard
     await page
@@ -416,7 +478,6 @@ test.describe('hover cards', () => {
   test('use keyboard shortcut to open hover card', async ({ page }) => {
     await page.goto('/pages/quickstart')
     await turnOffExperimentsInPage(page)
-    await dismissCTAPopover(page)
 
     // Simply putting focus on the link should not open the hovercard
     await page
@@ -449,7 +510,6 @@ test.describe('hover cards', () => {
   test('able to use Esc to close hovercard', async ({ page }) => {
     await page.goto('/pages/quickstart')
     await turnOffExperimentsInPage(page)
-    await dismissCTAPopover(page)
 
     // hover over a link and check for intro content from hovercard
     await page
@@ -480,21 +540,21 @@ test.describe('test nav at different viewports', () => {
     })
     await page.goto('/get-started/foo/bar')
 
-    // in article breadcrumbs at our custom xl viewport should remove last
-    // breadcrumb so for this page we should only have 'Get Started / Foo'
-    expect(await page.getByTestId('breadcrumbs-in-article').getByRole('link').all()).toHaveLength(2)
-    await expect(page.getByTestId('breadcrumbs-in-article').getByText('Foo')).toBeVisible()
-    await expect(page.getByTestId('breadcrumbs-in-article').getByText('Bar')).not.toBeVisible()
+    // The Docs 2026 secondary bar leads with a Home crumb, then the full trail
+    // 'Get started / Foo / Bar' (no hidden last crumb).
+    expect(await page.getByTestId('breadcrumbs-bar').getByRole('link').all()).toHaveLength(4)
+    await expect(page.getByTestId('breadcrumbs-bar').getByText('Foo')).toBeVisible()
+    await expect(page.getByTestId('breadcrumbs-bar').getByText('Bar')).toBeVisible()
 
     // breadcrumbs show up in rest reference pages
     await page.goto('/rest/actions/artifacts')
-    await expect(page.getByTestId('breadcrumbs-in-article')).toBeVisible()
+    await expect(page.getByTestId('breadcrumbs-bar')).toBeVisible()
 
     // breadcrumbs show up in one of the pages that use the AutomatedPage
     // component (e.g. graphql, audit log, etc.) -- we test the webhooks
     // reference page here
     await page.goto('/webhooks/webhook-events-and-payloads')
-    await expect(page.getByTestId('breadcrumbs-in-article')).toBeVisible()
+    await expect(page.getByTestId('breadcrumbs-bar')).toBeVisible()
   })
 
   test('large -> x-large viewports - 1012+', async ({ page }) => {
@@ -524,17 +584,15 @@ test.describe('test nav at different viewports', () => {
     })
     await page.goto('/get-started/foo/bar')
 
-    // breadcrumbs show up in the header, for this page we should have
-    // 3 items 'Get Started / Foo / Bar'
-    // in-article breadcrumbs don't show up
-    await expect(page.getByTestId('breadcrumbs-header')).toBeVisible()
-    expect(await page.getByTestId('breadcrumbs-header').getByRole('link').all()).toHaveLength(3)
-    await expect(page.getByTestId('breadcrumbs-in-article')).not.toBeVisible()
+    // breadcrumbs show up in the secondary bar; for this page we should have
+    // a Home crumb plus 'Get started / Foo / Bar'
+    await expect(page.getByTestId('breadcrumbs-bar')).toBeVisible()
+    expect(await page.getByTestId('breadcrumbs-bar').getByRole('link').all()).toHaveLength(4)
 
-    // hamburger button for sidebar overlay is visible
-    await expect(page.getByTestId('sidebar-hamburger')).toBeVisible()
-    await page.getByTestId('sidebar-hamburger').click()
-    await expect(page.locator('[role="dialog"][class*="Header_dialog"]')).toBeVisible()
+    // the mobile nav toggle is visible and expands the doc-tree nav inline
+    await expect(page.getByTestId('sidebar-mobile-toggle')).toBeVisible()
+    await page.getByTestId('sidebar-mobile-toggle').click()
+    await expect(page.getByTestId('sidebar')).toBeVisible()
   })
 
   test('medium viewports - 768-1011', async ({ page }) => {
@@ -557,9 +615,9 @@ test.describe('test nav at different viewports', () => {
     await expect(page.getByTestId('mobile-signup')).toBeVisible()
 
     // hamburger button for sidebar overlay is visible
-    await expect(page.getByTestId('sidebar-hamburger')).toBeVisible()
-    await page.getByTestId('sidebar-hamburger').click()
-    await expect(page.locator('[role="dialog"][class*="Header_dialog"]')).toBeVisible()
+    await expect(page.getByTestId('sidebar-mobile-toggle')).toBeVisible()
+    await page.getByTestId('sidebar-mobile-toggle').click()
+    await expect(page.getByTestId('sidebar')).toBeVisible()
   })
 
   test('small viewports - 544-767', async ({ page }) => {
@@ -586,9 +644,9 @@ test.describe('test nav at different viewports', () => {
     await expect(page.getByTestId('mobile-signup')).toBeVisible()
 
     // hamburger button for sidebar overlay is visible
-    await expect(page.getByTestId('sidebar-hamburger')).toBeVisible()
-    await page.getByTestId('sidebar-hamburger').click()
-    await expect(page.locator('[role="dialog"][class*="Header_dialog"]')).toBeVisible()
+    await expect(page.getByTestId('sidebar-mobile-toggle')).toBeVisible()
+    await page.getByTestId('sidebar-mobile-toggle').click()
+    await expect(page.getByTestId('sidebar')).toBeVisible()
   })
 
   test('x-small viewports - 0-544', async ({ page }) => {
@@ -598,7 +656,6 @@ test.describe('test nav at different viewports', () => {
     })
     await page.goto('/get-started/foo/bar')
     await turnOffExperimentsInPage(page)
-    await dismissCTAPopover(page)
 
     // header sign-up button is not visible
     await expect(page.getByTestId('header-signup')).not.toBeVisible()
@@ -621,9 +678,9 @@ test.describe('test nav at different viewports', () => {
     await expect(page.getByTestId('mobile-signup')).toBeVisible()
 
     // hamburger button for sidebar overlay is visible
-    await expect(page.getByTestId('sidebar-hamburger')).toBeVisible()
-    await page.getByTestId('sidebar-hamburger').click()
-    await expect(page.locator('[role="dialog"][class*="Header_dialog"]')).toBeVisible()
+    await expect(page.getByTestId('sidebar-mobile-toggle')).toBeVisible()
+    await page.getByTestId('sidebar-mobile-toggle').click()
+    await expect(page.getByTestId('sidebar')).toBeVisible()
   })
 
   test('do a search when the viewport is x-small', async ({ page }) => {
@@ -635,7 +692,6 @@ test.describe('test nav at different viewports', () => {
     })
     await page.goto('/get-started/foo/bar')
     await turnOffExperimentsInPage(page)
-    await dismissCTAPopover(page)
 
     // Use the search overlay
     await page.locator('[data-testid="mobile-search-button"]:visible').click()
@@ -660,7 +716,6 @@ test.describe('test nav at different viewports', () => {
     })
     await page.goto('/get-started/foo/bar')
     await turnOffExperimentsInPage(page)
-    await dismissCTAPopover(page)
 
     // Use the search overlay
     await page.locator('[data-testid="mobile-search-button"]:visible').click()
@@ -824,7 +879,10 @@ test.describe('survey', () => {
     await expect(page.getByRole('button', { name: 'Send' })).toBeVisible()
     await expect(page.locator('[for=survey-comment]')).toBeVisible()
 
-    await page.getByTestId('product-sidebar').getByLabel('Bar', { exact: true }).click()
+    await page
+      .getByTestId('product-sidebar')
+      .getByRole('link', { name: 'Bar', exact: true })
+      .click()
     await expect(page.getByRole('button', { name: 'Send' })).not.toBeVisible()
     await expect(page.locator('[for=survey-comment]')).not.toBeVisible()
   })
@@ -837,8 +895,13 @@ test.describe('rest API reference pages', () => {
     // URL that has that `?apiVersion=` query parameter.
     await expect(page).toHaveURL(/\/en\/rest\?apiVersion=/)
     await page.getByTestId('sidebar').getByText('Actions').click()
-    await page.getByTestId('sidebar').getByLabel('Artifacts').click()
-    await page.getByLabel('About artifacts in HubGit Actions').click()
+    // Brand NavList renders leaf articles as <a> links (not the label-associated
+    // controls Primer used), so locate them by link role rather than getByLabel.
+    await page.getByTestId('sidebar').getByRole('link', { name: 'Artifacts' }).click()
+    await page
+      .getByTestId('sidebar')
+      .getByRole('link', { name: 'About artifacts in HubGit Actions' })
+      .click()
     await expect(page).toHaveURL(/\/en\/rest\/actions\/artifacts\?apiVersion=/)
     await expect(page).toHaveTitle(/GitHub Actions Artifacts - GitHub Docs/)
   })
@@ -921,7 +984,6 @@ test('open search, and ask Copilot (Ask AI) a question', async ({ page }) => {
 
   await page.goto('/')
   await turnOffExperimentsInPage(page)
-  await dismissCTAPopover(page)
 
   await page.locator('[data-testid="search"]:visible').click()
   await page.getByTestId('overlay-search-input').fill('How do I create a Repository?')
@@ -964,7 +1026,6 @@ test('open search, Ask AI returns 400 error and shows general search results', a
 
   await page.goto('/')
   await turnOffExperimentsInPage(page)
-  await dismissCTAPopover(page)
 
   await page.locator('[data-testid="search"]:visible').click()
   await page.getByTestId('overlay-search-input').fill('foo')
@@ -1379,6 +1440,7 @@ test.describe('LandingArticleGridWithFilter component', () => {
     // Should show "no articles found" message as well
     const noResultsMessage = page.getByTestId('no-articles-message')
     await expect(noResultsMessage).toBeVisible()
+    await expect(noResultsMessage).toHaveText('No articles found matching your criteria.')
   })
 
   test('responsive behavior on different screen sizes', async ({ page }) => {
@@ -1409,6 +1471,31 @@ test.describe('LandingArticleGridWithFilter component', () => {
 
     const articleGrid = page.getByTestId('article-grid')
     await expect(articleGrid).toBeVisible()
+  })
+
+  test('bespoke landing page does not show duplicate articles', async ({ page }) => {
+    // The bespoke fixture lists individual articles AND their parent group
+    // as children, which would cause duplicates without deduplication.
+    await page.goto('/get-started/article-grid-bespoke')
+
+    const articleGrid = page.getByTestId('article-grid')
+    await expect(articleGrid).toBeVisible()
+
+    const articleCards = articleGrid.getByTestId('article-card')
+    // There are 4 unique articles across grid-category-one (2) and grid-category-two (2).
+    // Even though grid-article-one and grid-article-two are listed both individually
+    // and as children of grid-category-one, they should appear only once each.
+    await expect(articleCards).toHaveCount(4)
+
+    // Verify no duplicate titles by collecting all card titles
+    const titles: string[] = []
+    const count = await articleCards.count()
+    for (let i = 0; i < count; i++) {
+      const title = await articleCards.nth(i).locator('h3 span').textContent()
+      titles.push(title!)
+    }
+    const uniqueTitles = new Set(titles)
+    expect(uniqueTitles.size).toBe(titles.length)
   })
 })
 
@@ -1486,5 +1573,40 @@ test.describe('Non-child page resolution', () => {
 
     // Verify page loads correctly - the cross-product children don't prevent the page from working
     // The detailed sidebar filtering is tested by the survey test which verifies no duplicate entries
+  })
+})
+
+test.describe('copy as markdown button', () => {
+  // The article-body fetch backing this button is served for this fixture page
+  // (see src/fixtures/tests/api-article-body.ts), so the copy path succeeds.
+  const articlePath = '/en/get-started/start-your-journey/api-article-body-test-page'
+
+  test('swaps the copy icon for a checkmark after a successful copy', async ({ page, context }) => {
+    // The click handler writes the article markdown to the clipboard.
+    await context.grantPermissions(['clipboard-read', 'clipboard-write'])
+
+    await page.goto(articlePath)
+    await turnOffExperimentsInPage(page)
+
+    const copyButton = page.getByRole('button', { name: 'Copy as Markdown' })
+    await expect(copyButton).toBeVisible()
+
+    // Before clicking, the leading icon is the copy icon, not the checkmark.
+    await expect(copyButton.locator('.octicon-copy')).toBeVisible()
+    await expect(copyButton.locator('.octicon-check')).toHaveCount(0)
+
+    await copyButton.click()
+
+    // After a successful copy, the icon swaps to a checkmark...
+    await expect(copyButton.locator('.octicon-check')).toBeVisible()
+    await expect(copyButton.locator('.octicon-copy')).toHaveCount(0)
+
+    // ...and the article markdown lands on the clipboard.
+    const clipboardText = await page.evaluate(() => navigator.clipboard.readText())
+    expect(clipboardText).toContain('About GitHub')
+
+    // The checkmark is temporary and reverts to the copy icon (2s timeout).
+    await expect(copyButton.locator('.octicon-copy')).toBeVisible({ timeout: 5000 })
+    await expect(copyButton.locator('.octicon-check')).toHaveCount(0)
   })
 })

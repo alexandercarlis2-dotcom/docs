@@ -23,7 +23,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v6.0.1
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          app-id: ${{ secrets.DOCS_BOT_APP_ID }}
+          private-key: ${{ secrets.DOCS_BOT_APP_PRIVATE_KEY }}
+          owner: github
+          repositories: docs-internal,docs-engineering
 
       - name: 'Ensure ${{ env.CHANGELOG_FILE }} exists'
         run: |
@@ -34,9 +43,9 @@ jobs:
 
       - name: Check that the user belongs to the github org
         id: hubber_check
-        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3
         with:
-          github-token: ${{ secrets.DOCS_BOT_PAT_BASE }}
+          github-token: ${{ steps.app-token.outputs.token }}
           script: |
             try {
               await github.rest.teams.getMembershipForUserInOrg({
@@ -105,10 +114,10 @@ jobs:
 
       - name: Create a pull request
         if: env.CONTINUE_WORKFLOW == 'true'
-        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3
         id: create_pull_request
         with:
-          github-token: ${{ secrets.DOCS_BOT_PAT_BASE }}
+          github-token: ${{ steps.app-token.outputs.token }}
           script: |
             const { data: pullRequest } = await github.rest.pulls.create({
               owner: context.repo.owner,
@@ -124,12 +133,12 @@ jobs:
 
       - name: Add 'ready-for-doc-review' and 'skip FR board' labels to PR
         if: env.CONTINUE_WORKFLOW == 'true'
-        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3
         env:
           # Get the number of the PR that was just created:
           PULL_REQUEST_NUMBER: ${{ steps.create_pull_request.outputs.pull-request-number }}
         with:
-          github-token: ${{ secrets.DOCS_BOT_PAT_BASE }}
+          github-token: ${{ steps.app-token.outputs.token }}
           script: |
             await github.rest.issues.addLabels({
               owner: context.repo.owner,
@@ -140,12 +149,12 @@ jobs:
 
       - name: Assign PR to commenter
         if: env.CONTINUE_WORKFLOW == 'true'
-        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3
         env:
           # Reuse the PR number captured earlier
           PULL_REQUEST_NUMBER: ${{ steps.create_pull_request.outputs.pull-request-number }}
         with:
-          github-token: ${{ secrets.DOCS_BOT_PAT_BASE }}
+          github-token: ${{ steps.app-token.outputs.token }}
           script: |
             try {
               const username = context.payload.comment.user.login;
@@ -162,5 +171,9 @@ jobs:
       - uses: ./.github/actions/slack-alert
         if: ${{ failure() && github.event_name != 'workflow_dispatch' }}
         with:
-          slack_channel_id: ${{ secrets.DOCS_ALERTS_SLACK_CHANNEL_ID }}
           slack_token: ${{ secrets.SLACK_DOCS_BOT_TOKEN }}
+
+      - uses: ./.github/actions/create-workflow-failure-issue
+        if: ${{ failure() && github.event_name != 'workflow_dispatch' }}
+        with:
+          token: ${{ steps.app-token.outputs.token }}

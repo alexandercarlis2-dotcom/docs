@@ -1,17 +1,18 @@
 ---
 title: Getting started with GitHub Copilot CLI
 shortTitle: Copilot CLI quickstart
-intro: 'Quickly learn how to use {% data variables.copilot.copilot_cli %}.'
+intro: Quickly learn how to use {% data variables.copilot.copilot_cli %}.
 allowTitleToDifferFromFilename: true
 product: '{% data reusables.gated-features.copilot-cli %}'
 versions:
   feature: copilot
-topics:
-  - Copilot
-contentType: get-started
+contentType: how-tos
 category:
-  - Learn about Copilot
+  - Build with Copilot CLI
+  - Quickstarts
   - Author and optimize with Copilot
+docsTeamMetrics:
+  - copilot-cli
 ---
 
 ## Introduction
@@ -41,7 +42,7 @@ Use one of these commands:
 * **macOS/Linux (Homebrew)**
 
   ```bash copy
-  brew install copilot-cli
+  brew install --cask copilot-cli
   ```
 
 ## Starting the CLI for the first time
@@ -68,6 +69,8 @@ Use one of these commands:
    Give me an overview of this project.
    ```
 
+   If you like, you can speak your prompt instead of typing it. See [AUTOTITLE](/copilot/how-tos/copilot-cli/use-copilot-cli/voice-input).
+
 ## Core shortcuts to master
 
 | Shortcut | Action |
@@ -77,6 +80,7 @@ Use one of these commands:
 | <kbd>Ctrl</kbd>+<kbd>L</kbd>  | Clear the screen |
 | `@`                           | Mention files to include in context |
 | `/`                           | Show slash commands |
+| `?`                           | Show tabbed help |
 | <kbd>↑</kbd> and <kbd>↓</kbd> | Navigate the command history |
 
 For a full list of shortcuts and available commands, enter:
@@ -121,6 +125,7 @@ where TOPIC is one of the topics listed in the help output.
 
 Find out more about {% data variables.copilot.copilot_cli_short %}:
 
-* [AUTOTITLE](/copilot/concepts/agents/about-copilot-cli)
-* [AUTOTITLE](/copilot/how-tos/use-copilot-agents/use-copilot-cli)
+* [AUTOTITLE](/copilot/concepts/agents/copilot-cli/about-copilot-cli)
+* [AUTOTITLE](/copilot/how-tos/copilot-cli/use-copilot-cli/overview)
 * [AUTOTITLE](/copilot/how-tos/copilot-cli/cli-best-practices)
+* [Get started with {% data variables.copilot.copilot_cli %}: A free hands-on course](https://developer.microsoft.com/blog/get-started-with-github-copilot-cli-a-free-hands-on-course)
